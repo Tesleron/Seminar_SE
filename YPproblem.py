@@ -22,3 +22,5 @@ def yp(n):
               2, math.floor(math.log(n, 2)))) + 1))
 
 main()
+#shmokim meofefim
+x = 3
