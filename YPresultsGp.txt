@@ -1,0 +1,4 @@
+yosepush plaviuos genreal problem
+
+n = 41  m = 2  k = 1
+n = 41 survive by algorithm = [31]
