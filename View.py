@@ -1,18 +1,26 @@
 import tkinter as tk
 import math
+import time
 
 
-def yp(n, m, k):
+def yp(n, m, k, view, interval):
     # 0<n     n elements in the circle
     # 1<=m<=n    reduce the m element after the current existing element
     # 1<=k<=n k elements remain in the circle at the end of process
     print("n =", n, " m =", m, " k =", k)
     l = [i for i in range(1, n+1)]
     i = 0
-    if (len(l) > k):
+    while (len(l) > k):
+        print("The dic now",view.numbers)
+        print("l of yp is",l)
         i = (i + m) % len(l)
         l.remove(l[i])
-        return l
+        print("el ba ai",l[i])
+        view.remove_numbers(l[i])
+        view.master.update()
+        time.sleep(interval)
+
+        # removal from gui
     if m == 1 and k==1:
      print("n =", n, "survive by algorithm =", l, \
            "survive by formula =", \
@@ -106,7 +114,7 @@ class CircleNumbers:
         self.button.pack(pady=2)
 
         # Initialize variables
-        self.numbers = []
+        self.numbers = {}
         self.circle_size = 150  # radius of the circle
         self.circle_center = (200, 250)  # center of the circle
         self.timer = None
@@ -114,8 +122,10 @@ class CircleNumbers:
     def start_timer(self):
         self.cancel_timer()
         n = int(self.sliderPeople.get())
-        self.draw_circle(n)
-        self.timer = self.master.after(3000, self.remove_numbers)
+        m = int(self.sliderJumps.get())
+        k = int(self.sliderSurvivors.get())
+        interval = int(self.sliderSpeed.get())
+        yp(n, m, k, self, interval)
 
     def draw_circle(self, n):
         self.clear_circle()
@@ -127,25 +137,31 @@ class CircleNumbers:
             x = self.circle_center[0] + self.circle_size * math.cos(angle)
             y = self.circle_center[1] + self.circle_size * math.sin(angle)
             number_label = self.canvas.create_text(x, y, text=str(i+1))
-            self.numbers.append(number_label)
+            self.numbers[i+1] = number_label
 
-    def remove_numbers(self):
-        if len(self.numbers) > 1:
-            n = len(self.numbers)
-            m = 2
-            k = 1
-            i = 0
-            order = yp(n, m, k)
-            number_to_remove = self.numbers[i]
-            self.canvas.delete(number_to_remove)
-            self.numbers.remove(number_to_remove)
-            i+=1
-            self.timer = self.master.after(3000, self.remove_numbers)
+    def remove_numbers(self, number_to_remove):
+        print("Number to remove is",number_to_remove)
+        print("self.numbers[number_to_remove]",self.numbers[number_to_remove])
+        self.canvas.delete(self.numbers[number_to_remove])
+        del self.numbers[number_to_remove]
 
+    def remove_numbers2(self):
+            if len(self.numbers) > 1:
+                n = len(self.numbers)
+                m = 2
+                k = 1
+                i = 0
+                order = yp(n, m, k)
+                number_to_remove = self.numbers[i]
+                self.canvas.delete(number_to_remove)
+                self.numbers.remove(number_to_remove)
+                i+=1
+                self.timer = self.master.after(3000, self.remove_numbers)
+                   
     def clear_circle(self):
-        for number_label in self.numbers:
+        for number_label in self.numbers.values():
             self.canvas.delete(number_label)
-        self.numbers = []
+        self.numbers = {}
 
     def cancel_timer(self):
         if self.timer is not None:
