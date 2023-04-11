@@ -6,6 +6,7 @@ import threading
 
 def yp(n, m, k, view, interval, i = 0):
     # 0<n     n elements in the circle
+    hi = 2 #dogshit
     # 1<=m<=n    reduce the m element after the current existing element
     # 1<=k<=n k elements remain in the circle at the end of process
     print("n =", n, " m =", m, " k =", k)
