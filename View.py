@@ -1,37 +1,41 @@
 import tkinter as tk
 import math
 import time
+import threading
+from PIL import Image, ImageTk
 
-
-def yp(n, m, k, view, interval):
+def yp(n, m, k, view, interval, i = 0):
     # 0<n     n elements in the circle
     # 1<=m<=n    reduce the m element after the current existing element
     # 1<=k<=n k elements remain in the circle at the end of process
     print("n =", n, " m =", m, " k =", k)
     l = [i for i in range(1, n+1)]
-    i = 0
-    while (len(l) > k):
-        print("The dic now",view.numbers)
-        print("l of yp is",l)
+    while (len(l) > k and view.active):
         i = (i + m) % len(l)
-        l.remove(l[i])
-        print("el ba ai",l[i])
-        view.remove_numbers(l[i])
+        j = len(l) - i
+        if view.checkbox_var.get() is False:
+            view.remove_numbers(l[i])
+            l.remove(l[i])
+        else:
+            view.remove_numbers(l[j])
+            l.remove(l[j])
         view.master.update()
         time.sleep(interval)
-
         # removal from gui
-    if m == 1 and k==1:
+    if m == 1 and k==1 and view.active:
      print("n =", n, "survive by algorithm =", l, \
            "survive by formula =", \
            int(2 * (n - math.pow(2, math.floor(math.log(n, 2)))) + 1))
-    else:
+    elif view.active:
         print("n =", n, "survive by algorithm =", l)
+    else:
+        print("Game canceled")
 
         
 class CircleNumbers:
     def __init__(self, master):
         self.master = master
+        self.active = True
         master.title("Circle of Numbers")
         master.geometry("700x500")
         master.resizable(False, False)
@@ -42,7 +46,7 @@ class CircleNumbers:
         frame.pack(side=tk.RIGHT, padx=50)
 
         # Create the "Speed" label
-        self.labelSurvivors = tk.Label(frame, text="Number:")
+        self.labelSurvivors = tk.Label(frame, text="People:")
         self.labelSurvivors.pack(pady=2)
 
         # Create the slider
@@ -54,7 +58,7 @@ class CircleNumbers:
         self.labelSpeed.pack(pady=2)
 
         # Create the slider
-        self.sliderSpeed = tk.Scale(frame, from_=0, to=42, orient=tk.HORIZONTAL)
+        self.sliderSpeed = tk.Scale(frame, from_=1, to=3, orient=tk.HORIZONTAL)
         self.sliderSpeed.pack(pady=2)
 
         # Create the "Speed" label
@@ -70,7 +74,7 @@ class CircleNumbers:
         self.labelStartFrom.pack(pady=2)
 
         # Create the slider
-        self.sliderStartFrom = tk.Scale(frame, from_=0, to=42, orient=tk.HORIZONTAL)
+        self.sliderStartFrom = tk.Scale(frame, from_=1, to=42, orient=tk.HORIZONTAL)
         self.sliderStartFrom.pack(pady=2)
 
         # Create the "Speed" label
@@ -78,7 +82,7 @@ class CircleNumbers:
         self.labelSurvivors.pack(pady=2)
 
         # Create the slider
-        self.sliderSurvivors = tk.Scale(frame, from_=0, to=42, orient=tk.HORIZONTAL)
+        self.sliderSurvivors = tk.Scale(frame, from_=1, to=42, orient=tk.HORIZONTAL)
         self.sliderSurvivors.pack(pady=2)
 
         # Create a frame named "checkBoxFrame"
@@ -86,8 +90,8 @@ class CircleNumbers:
         checkBoxFrame.pack()
 
         # Create a checkbox
-        checkbox_var = tk.BooleanVar()
-        checkbox = tk.Checkbutton(checkBoxFrame, text="Clockwise", variable=checkbox_var)
+        self.checkbox_var = tk.BooleanVar()
+        checkbox = tk.Checkbutton(checkBoxFrame, text="Anti-Clockwise", variable=self.checkbox_var)
         checkbox.pack(side=tk.LEFT)
 
         # Create the canvas for the circle
@@ -106,11 +110,11 @@ class CircleNumbers:
         self.canvas.place(x=x, y=y)
 
         # Create the "PLAY" button
-        self.button = tk.Button(frame, text="Start", command=self.start_timer)
-        self.button.pack(pady=2)
+        self.playButton = tk.Button(frame, text="Start", command=self.start_timer, state='disabled')
+        self.playButton.pack(pady=2)
 
         # Create the "PLAY" button
-        self.button = tk.Button(frame, text="Restart", command=self.start_timer)
+        self.button = tk.Button(frame, text="Restart", command=self.clear_circle)
         self.button.pack(pady=2)
 
         # Initialize variables
@@ -120,16 +124,25 @@ class CircleNumbers:
         self.timer = None
 
     def start_timer(self):
-        self.cancel_timer()
         n = int(self.sliderPeople.get())
         m = int(self.sliderJumps.get())
         k = int(self.sliderSurvivors.get())
+        i = int(self.sliderStartFrom.get())
         interval = int(self.sliderSpeed.get())
-        yp(n, m, k, self, interval)
+        yp(n, m, k, self, interval, i)
 
     def draw_circle(self, n):
         self.clear_circle()
+        self.active = True
         n = int(n)
+        self.sliderStartFrom.config(to=n)
+        self.sliderSurvivors.config(to=n)
+        self.sliderJumps.config(to=n)
+        if n>=1:
+            self.playButton.config(state='active')
+        else:
+            self.playButton.config(state='disabled')
+            return
         # Calculate the positions of the numbers in the circle
         angle_increment = 2 * math.pi / n
         for i in range(n):
@@ -140,34 +153,14 @@ class CircleNumbers:
             self.numbers[i+1] = number_label
 
     def remove_numbers(self, number_to_remove):
-        print("Number to remove is",number_to_remove)
-        print("self.numbers[number_to_remove]",self.numbers[number_to_remove])
         self.canvas.delete(self.numbers[number_to_remove])
         del self.numbers[number_to_remove]
-
-    def remove_numbers2(self):
-            if len(self.numbers) > 1:
-                n = len(self.numbers)
-                m = 2
-                k = 1
-                i = 0
-                order = yp(n, m, k)
-                number_to_remove = self.numbers[i]
-                self.canvas.delete(number_to_remove)
-                self.numbers.remove(number_to_remove)
-                i+=1
-                self.timer = self.master.after(3000, self.remove_numbers)
                    
     def clear_circle(self):
+        self.active = False
         for number_label in self.numbers.values():
             self.canvas.delete(number_label)
         self.numbers = {}
-
-    def cancel_timer(self):
-        if self.timer is not None:
-            self.master.after_cancel(self.timer)
-            self.timer = None
-
 
 root = tk.Tk()
 app = CircleNumbers(root)
