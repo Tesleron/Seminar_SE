@@ -66,7 +66,7 @@ class CircleNumbers:
         self.sliderSpeed = tk.Scale(frame, from_=1, to=3, orient=tk.HORIZONTAL)
         self.sliderSpeed.pack(pady=2)
 
-        # Create the "Speed" label
+        # Create the "Jumps" label
         self.labelJumps = tk.Label(frame, text="Jumps:")
         self.labelJumps.pack(pady=2)
 
@@ -74,7 +74,7 @@ class CircleNumbers:
         self.sliderJumps = tk.Scale(frame, from_=0, to=42, orient=tk.HORIZONTAL)
         self.sliderJumps.pack(pady=2)
 
-        # Create the "Speed" label
+        # Create the "Start from" label
         self.labelStartFrom = tk.Label(frame, text="Start from:")
         self.labelStartFrom.pack(pady=2)
 
@@ -82,7 +82,7 @@ class CircleNumbers:
         self.sliderStartFrom = tk.Scale(frame, from_=1, to=42, orient=tk.HORIZONTAL)
         self.sliderStartFrom.pack(pady=2)
 
-        # Create the "Speed" label
+        # Create the "Survivors" label
         self.labelSurvivors = tk.Label(frame, text="Survivors:")
         self.labelSurvivors.pack(pady=2)
 
@@ -131,7 +131,7 @@ class CircleNumbers:
         self.images = {}
         self.circle_size = 190  # radius of the circle
         self.circle_size_imgs = 160  # radius of the images circle
-        self.circle_center = (200, 250)  # center of the circle
+        self.circle_center = (200, 220)  # center of the circle
         self.timer = None
 
     def start_timer(self):
