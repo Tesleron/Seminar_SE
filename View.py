@@ -50,7 +50,7 @@ class CircleNumbers:
         frame = tk.Frame(master)
         frame.pack(side=tk.RIGHT, padx=50)
 
-        # Create the "Speed" label
+        # Create the "People" label
         self.labelSurvivors = tk.Label(frame, text="People:")
         self.labelSurvivors.pack(pady=2)
 
