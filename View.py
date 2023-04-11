@@ -41,7 +41,7 @@ class CircleNumbers:
     def __init__(self, master):
         self.master = master
         self.active = True
-        master.title("Circle of Numbers")
+        master.title("YP_Problem")
         master.geometry("700x500")
         master.resizable(False, False)
         master.wm_attributes("-topmost", 1)
