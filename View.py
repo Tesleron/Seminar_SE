@@ -2,7 +2,7 @@ import tkinter as tk
 import math
 import time
 import threading
-from PIL import Image, ImageTk
+
 
 def yp(n, m, k, view, interval, i = 0):
     # 0<n     n elements in the circle
