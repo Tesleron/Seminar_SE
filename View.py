@@ -178,7 +178,7 @@ class CircleNumbers:
             x_img = self.circle_center[0] + self.circle_size_imgs * math.cos(angle)
             y_img = self.circle_center[1] + self.circle_size_imgs * math.sin(angle)
             
-            img = Image.open("C:\PythonGal\Seminar_SE\gladiator (3).png")
+            img = Image.open("gladiator (3).png")
             photo = ImageTk.PhotoImage(img)
             self.canvas.image_refs.append(photo)
             photo_output = self.canvas.create_image(x_img, y_img, image=photo)
