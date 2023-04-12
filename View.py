@@ -18,6 +18,7 @@ def yp(n, m, k, view, interval, i = 0):
             view.remove_numbers(l[i])
             l.remove(l[i])
         else:
+            print(f"l is \n{l}\nj is\n{j}\nl[j] is \n{l[j]}\nview.numbers is\n{view.numbers}\n")
             view.remove_numbers(l[j])
             l.remove(l[j])
         view.master.update()
@@ -178,7 +179,7 @@ class CircleNumbers:
             x_img = self.circle_center[0] + self.circle_size_imgs * math.cos(angle)
             y_img = self.circle_center[1] + self.circle_size_imgs * math.sin(angle)
             
-            img = Image.open("gladiator (3).png")
+            img = Image.open("Seminar_SE\glad.png")
             photo = ImageTk.PhotoImage(img)
             self.canvas.image_refs.append(photo)
             photo_output = self.canvas.create_image(x_img, y_img, image=photo)
