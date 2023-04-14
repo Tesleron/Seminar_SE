@@ -6,7 +6,7 @@ import sys
 def main():
     # sys.stdout = open("YPresultsGp.txt", "w")
     print("yosepush plaviuos genreal problem\n")
-    yp(21, 1, 1)
+    yp(41, 1, 1)
     # yp(41, 1, 2)
     # yp(15, 1, 1)
     # yp(16, 1, 1)
