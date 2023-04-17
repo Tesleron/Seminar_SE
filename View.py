@@ -8,11 +8,12 @@ def yp(n, m, k, view, interval, i = 0):
     # 0<n     n elements in the circle
     # 1<=m<=n    reduce the m element after the current existing element
     # 1<=k<=n k elements remain in the circle at the end of process
-    print("n =", n, " m =", m, " k =", k)
+    # print("n =", n, " m =", m, " k =", k)
     if view.checkbox_var.get() is True:
         i = n - i - 1
     l = [i for i in range(1, n+1)]
     while (len(l) > k and view.active):
+        view.playButton.config(state='disabled')
         i = (i + m) % len(l)
         j = len(l) - i - 1
         if view.checkbox_var.get() is False:
@@ -24,19 +25,20 @@ def yp(n, m, k, view, interval, i = 0):
             l.remove(l[j])
         view.master.update()
         time.sleep(interval/2)
-        
-    if m == 1 and k==1 and view.active:
+    view.playButton.config(state='active')
+    if m == 1 and k==1 and view.active and view.checkbox_var.get() is False:
      message = "n = " + str(n) + " survive by algorithm = " + str(l) + ", survive by formula = " + str(int(2 * (n - math.pow(2, math.floor(math.log(n, 2)))) + 1))
      view.display_endgame_msg(message)
-     print("n =", n, "survive by algorithm =", l, \
-           "survive by formula =", \
-           int(2 * (n - math.pow(2, math.floor(math.log(n, 2)))) + 1))
+    #  print("n =", n, "survive by algorithm =", l, \
+    #        "survive by formula =", \
+    #        int(2 * (n - math.pow(2, math.floor(math.log(n, 2)))) + 1))
     elif view.active:
         message = "n = " + str(n) + " survive by algorithm = " + str(l)
         view.display_endgame_msg(message)
-        print("n =", n, "survive by algorithm =", l)
+        # print("n =", n, "survive by algorithm =", l)
     else:
-        print("Game canceled")
+        pass
+        # print("Game canceled")
 
         
 class CircleNumbers:
@@ -44,7 +46,7 @@ class CircleNumbers:
         self.master = master
         self.active = True
         master.title("YP_Problem")
-        master.geometry("700x500")
+        master.geometry("900x600")
         master.resizable(False, False)
         master.wm_attributes("-topmost", 1)
 
@@ -57,7 +59,7 @@ class CircleNumbers:
         self.labelSurvivors.pack(pady=2)
 
         # Create the slider
-        self.sliderPeople = tk.Scale(frame, from_=0, to=41, orient=tk.HORIZONTAL, command=self.draw_circle)
+        self.sliderPeople = tk.Scale(frame, from_=1, to=50, orient=tk.HORIZONTAL, command=self.draw_circle)
         self.sliderPeople.pack(pady=10)
 
         # Create the "Speed" label
@@ -73,7 +75,7 @@ class CircleNumbers:
         self.labelJumps.pack(pady=2)
 
         # Create the slider
-        self.sliderJumps = tk.Scale(frame, from_=0, to=42, orient=tk.HORIZONTAL)
+        self.sliderJumps = tk.Scale(frame, from_=1, to=42, orient=tk.HORIZONTAL)
         self.sliderJumps.pack(pady=2)
 
         # Create the "Start from" label
@@ -102,15 +104,15 @@ class CircleNumbers:
         checkbox.pack(side=tk.LEFT)
 
         # Create the canvas for the circle
-        self.canvas = tk.Canvas(master, width=450, height=450)
+        self.canvas = tk.Canvas(master, width=900, height=500)
         self.canvas.pack()
         self.canvas.image_refs = []
         
         # Calculate the center coordinates of the root window
         root_width = root.winfo_width()
         root_height = root.winfo_height()
-        canvas_width = 400
-        canvas_height = 400
+        canvas_width = 850
+        canvas_height = 450
         x = (root_width - canvas_width) // 2
         y = (root_height - canvas_height) // 2
 
@@ -121,9 +123,9 @@ class CircleNumbers:
         self.playButton = tk.Button(frame, text="Start", command=self.start_timer, state='disabled')
         self.playButton.pack(pady=2)
 
-        # Create the "Restart" button
-        self.button = tk.Button(frame, text="Restart", command=lambda: self.clear_circle(True))
-        self.button.pack(pady=2)
+        # # Create the "Restart" button
+        # self.button = tk.Button(frame, text="Restart", command=lambda: self.clear_circle(True))
+        # self.button.pack(pady=2)
         
         self.endgame_text = tk.Label(self.master, text="", font=("Arial", 12))
         self.endgame_text.place(relx = 0.0, rely = 1.0, anchor ='sw')
@@ -131,12 +133,13 @@ class CircleNumbers:
         # Initialize variables
         self.numbers = {}
         self.images = {}
-        self.circle_size = 190  # radius of the circle
-        self.circle_size_imgs = 160  # radius of the images circle
+        self.circle_size = 250  # radius of the circle
+        self.circle_size_imgs = 200  # radius of the images circle
         self.circle_center = (200, 220)  # center of the circle
         self.timer = None
 
     def start_timer(self):
+        
         n = int(self.sliderPeople.get())
         m = int(self.sliderJumps.get())
         k = int(self.sliderSurvivors.get())
@@ -164,7 +167,7 @@ class CircleNumbers:
         # Calculate the positions of the numbers in the circle
         angle_increment = 2 * math.pi / n
         for i in range(n):
-            angle = i * angle_increment
+            angle = i * angle_increment - math.pi / 2 
             x = self.circle_center[0] + self.circle_size * math.cos(angle)
             y = self.circle_center[1] + self.circle_size * math.sin(angle)
             
@@ -176,11 +179,10 @@ class CircleNumbers:
         # Calculate the positions of the numbers in the circle
         angle_increment = 2 * math.pi / n
         for i in range(n):
-            angle = i * angle_increment
+            angle = i * angle_increment - math.pi / 2
             x_img = self.circle_center[0] + self.circle_size_imgs * math.cos(angle)
             y_img = self.circle_center[1] + self.circle_size_imgs * math.sin(angle)
-            
-            img = Image.open("Seminar_SE\glad.png")
+            img = Image.open("./glad.png")
             photo = ImageTk.PhotoImage(img)
             self.canvas.image_refs.append(photo)
             photo_output = self.canvas.create_image(x_img, y_img, image=photo)
@@ -217,7 +219,7 @@ app = CircleNumbers(root)
 app.labelSurvivors.pack_configure(anchor=tk.CENTER)
 app.sliderSurvivors.pack_configure(anchor=tk.CENTER)
 app.sliderSpeed.pack_configure(anchor=tk.CENTER)
-app.button.pack_configure(anchor=tk.CENTER)
+#app.button.pack_configure(anchor=tk.CENTER)
 app.canvas.pack_configure(anchor=tk.CENTER)
 
 root.mainloop()
