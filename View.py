@@ -192,14 +192,13 @@ class CircleNumbers:
             angle = i * angle_increment - math.pi / 2
             x_img = self.circle_center[0] + self.circle_size_imgs * math.cos(angle)
             y_img = self.circle_center[1] + self.circle_size_imgs * math.sin(angle)
-            img = Image.open("Seminar_SE\glad.png")
+            img = Image.open("./glad.png")
             photo = ImageTk.PhotoImage(img)
             self.canvas.image_refs.append(photo)
             photo_output = self.canvas.create_image(x_img, y_img, image=photo)
             self.images[i+1] = photo_output
             
-            
-
+        
     def remove_numbers(self, number_to_remove):
         self.canvas.delete(self.numbers[number_to_remove])
         self.canvas.delete(self.images[number_to_remove])
