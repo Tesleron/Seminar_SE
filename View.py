@@ -46,7 +46,7 @@ class CircleNumbers:
         self.master = master
         self.active = True
         master.title("YP_Problem")
-        master.geometry("900x600")
+        master.geometry("900x650")
         master.resizable(False, False)
         master.wm_attributes("-topmost", 1)
 
@@ -104,15 +104,15 @@ class CircleNumbers:
         checkbox.pack(side=tk.LEFT)
 
         # Create the canvas for the circle
-        self.canvas = tk.Canvas(master, width=900, height=500)
+        self.canvas = tk.Canvas(master, width=900, height=600)
         self.canvas.pack()
         self.canvas.image_refs = []
         
         # Calculate the center coordinates of the root window
         root_width = root.winfo_width()
         root_height = root.winfo_height()
-        canvas_width = 850
-        canvas_height = 450
+        canvas_width = 900
+        canvas_height = 600
         x = (root_width - canvas_width) // 2
         y = (root_height - canvas_height) // 2
 
@@ -133,9 +133,9 @@ class CircleNumbers:
         # Initialize variables
         self.numbers = {}
         self.images = {}
-        self.circle_size = 250  # radius of the circle
-        self.circle_size_imgs = 200  # radius of the images circle
-        self.circle_center = (200, 220)  # center of the circle
+        self.circle_size = 280  # radius of the circle
+        self.circle_size_imgs = 255  # radius of the images circle
+        self.circle_center = (350, 300)  # center of the circle
         self.timer = None
 
     def start_timer(self):
@@ -209,7 +209,7 @@ class CircleNumbers:
         self.canvas.delete('all')
         
     def display_endgame_msg(self, message):
-        message = textwrap.fill(message, width=70)
+        message = textwrap.fill(message, width=100)
         self.endgame_text.config(text = message)   
 
 root = tk.Tk()
