@@ -3,8 +3,13 @@ import math
 import time
 import textwrap
 from PIL import Image, ImageTk
+import pyttsx3
+
+# init function to get an engine instance for the speech synthesis
+engine = pyttsx3.init()
 
 def yp(n, m, k, view, interval, i = 0):
+    message = ""
     # 0<n     n elements in the circle
     # 1<=m<=n    reduce the m element after the current existing element
     # 1<=k<=n k elements remain in the circle at the end of process
@@ -38,6 +43,11 @@ def yp(n, m, k, view, interval, i = 0):
         # print("n =", n, "survive by algorithm =", l)
     else:
         pass
+    engine.say(message)
+        # say method on the engine that passing input text to be spoken
+    
+    # run and wait method, it processes the voice commands.
+    engine.runAndWait()
         # print("Game canceled")
 
         
@@ -139,12 +149,12 @@ class CircleNumbers:
         self.timer = None
 
     def start_timer(self):
-        
         n = int(self.sliderPeople.get())
         m = int(self.sliderJumps.get())
         k = int(self.sliderSurvivors.get())
         i = int(self.sliderStartFrom.get() - 1)
         interval = int(self.sliderSpeed.get())
+        self.draw_circle(n)
         yp(n, m, k, self, interval, i)
 
     def draw_circle(self, n):
@@ -182,7 +192,7 @@ class CircleNumbers:
             angle = i * angle_increment - math.pi / 2
             x_img = self.circle_center[0] + self.circle_size_imgs * math.cos(angle)
             y_img = self.circle_center[1] + self.circle_size_imgs * math.sin(angle)
-            img = Image.open("./glad.png")
+            img = Image.open("Seminar_SE\glad.png")
             photo = ImageTk.PhotoImage(img)
             self.canvas.image_refs.append(photo)
             photo_output = self.canvas.create_image(x_img, y_img, image=photo)
