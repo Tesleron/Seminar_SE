@@ -1,56 +1,11 @@
 import tkinter as tk
 import math
-import time
 import textwrap
 from PIL import Image, ImageTk
-import pyttsx3
+from Logic import yp
 
 # init function to get an engine instance for the speech synthesis
-engine = pyttsx3.init()
 
-def yp(n, m, k, view, interval, i = 0):
-    message = ""
-    # 0<n     n elements in the circle
-    # 1<=m<=n    reduce the m element after the current existing element
-    # 1<=k<=n k elements remain in the circle at the end of process
-    # print("n =", n, " m =", m, " k =", k)
-    if view.checkbox_var.get() is True:
-        i = n - i - 1
-    l = [i for i in range(1, n+1)]
-    while (len(l) > k and view.active):
-        view.playButton.config(state='disabled')
-        i = (i + m) % len(l)
-        j = len(l) - i - 1
-        if view.checkbox_var.get() is False:
-            view.remove_numbers(l[i])
-            l.remove(l[i])
-        else:
-            # print(f"l is \n{l}\nj is\n{j}\nl[j] is \n{l[j]}\nview.numbers is\n{view.numbers}\n")
-            view.remove_numbers(l[j])
-            l.remove(l[j])
-        view.master.update()
-        time.sleep(interval/2)
-    view.playButton.config(state='active')
-    if m == 1 and k==1 and view.active and view.checkbox_var.get() is False:
-     message = "n = " + str(n) + " survive by algorithm = " + str(l) + ", survive by formula = " + str(int(2 * (n - math.pow(2, math.floor(math.log(n, 2)))) + 1))
-     view.display_endgame_msg(message)
-    #  print("n =", n, "survive by algorithm =", l, \
-    #        "survive by formula =", \
-    #        int(2 * (n - math.pow(2, math.floor(math.log(n, 2)))) + 1))
-    elif view.active:
-        message = "n = " + str(n) + " survive by algorithm = " + str(l)
-        view.display_endgame_msg(message)
-        # print("n =", n, "survive by algorithm =", l)
-    else:
-        pass
-    engine.say(message)
-        # say method on the engine that passing input text to be spoken
-    
-    # run and wait method, it processes the voice commands.
-    engine.runAndWait()
-        # print("Game canceled")
-
-        
 class CircleNumbers:
     def __init__(self, master):
         self.master = master
@@ -149,77 +104,134 @@ class CircleNumbers:
         self.timer = None
 
     def start_timer(self):
-        n = int(self.sliderPeople.get())
-        m = int(self.sliderJumps.get())
-        k = int(self.sliderSurvivors.get())
-        i = int(self.sliderStartFrom.get() - 1)
-        interval = int(self.sliderSpeed.get())
+        """
+        Start a timer with given parameters.
+
+        :param self (object): The instance of the class that this method belongs to.
+        :return: None
+        """
+        # Get values from sliders
+        n = int(self.sliderPeople.get())  # Number of people
+        m = int(self.sliderJumps.get())  # Number of jumps
+        k = int(self.sliderSurvivors.get())  # Number of survivors
+        i = int(self.sliderStartFrom.get() - 1)  # Starting index (0-based)
+        interval = int(self.sliderSpeed.get())  # Time interval
+
+        # Draw circles based on the number of people
         self.draw_circle(n)
+
+        # Call yp() function with given parameters to start the timer
         yp(n, m, k, self, interval, i)
 
     def draw_circle(self, n):
-        self.clear_circle(False)
-        self.active = True
-        n = int(n)
-        self.sliderStartFrom.config(to=n)
-        self.sliderSurvivors.config(to=n)
-        self.sliderJumps.config(to=n)
-        if n>=1:
-            self.playButton.config(state='active')
+        """
+        Draw a circle with given number of people.
+
+        :param self (object): The instance of the class that this method belongs to.
+        :param n (int): Number of people.
+        :return: None
+        """
+        self.clear_circle(False)  # Clear previous circles
+        self.active = True  # Set "active" flag to True
+        n = int(n)  # Convert n to integer
+        self.sliderStartFrom.config(to=n)  # Update "Start From" slider's maximum value
+        self.sliderSurvivors.config(to=n)  # Update "Survivors" slider's maximum value
+        self.sliderJumps.config(to=n)  # Update "Jumps" slider's maximum value
+        if n >= 1:
+            self.playButton.config(state='active')  # Enable "Play" button if n is greater than or equal to 1
         else:
-            self.playButton.config(state='disabled')
+            self.playButton.config(state='disabled')  # Disable "Play" button if n is less than 1
             return
-        
-        self.draw_outer_circle(n)
-        self.draw_inner_circle(n)
+        self.draw_outer_circle(n)  # Draw outer circle
+        self.draw_inner_circle(n)  # Draw inner circle
             
     def draw_outer_circle(self, n):
-        # Calculate the positions of the numbers in the circle
+        """
+        Draw the outer circle with numbers positioned evenly on the circumference.
+
+        :param self (object): The instance of the class that this method belongs to.
+        :param n (int): Number of people.
+        :return: None
+        """
+        # Calculate the angle increment between each number on the circumference
         angle_increment = 2 * math.pi / n
+
+        # Loop through each number and calculate its position on the circumference
         for i in range(n):
-            angle = i * angle_increment - math.pi / 2 
-            x = self.circle_center[0] + self.circle_size * math.cos(angle)
-            y = self.circle_center[1] + self.circle_size * math.sin(angle)
-            
-            number_label = self.canvas.create_text(x, y, text=str(i+1))
-            self.numbers[i+1] = number_label
-            
-            
+            angle = i * angle_increment - math.pi / 2  # Calculate the angle for each number
+            x = self.circle_center[0] + self.circle_size * math.cos(angle)  # Calculate x-coordinate
+            y = self.circle_center[1] + self.circle_size * math.sin(angle)  # Calculate y-coordinate
+
+            number_label = self.canvas.create_text(x, y, text=str(i+1))  # Create a text label for the number
+            self.numbers[i+1] = number_label  # Store the text label in a dictionary with the number as the key
+                
     def draw_inner_circle(self, n):
-        # Calculate the positions of the numbers in the circle
+        """
+        Draw the inner circle with images positioned evenly on the circumference.
+
+        :param self (object): The instance of the class that this method belongs to.
+        :param n (int): Number of people.
+        :return: None
+        """
+        # Calculate the angle increment between each image on the circumference
         angle_increment = 2 * math.pi / n
+
+        # Loop through each image and calculate its position on the circumference
         for i in range(n):
-            angle = i * angle_increment - math.pi / 2
-            x_img = self.circle_center[0] + self.circle_size_imgs * math.cos(angle)
-            y_img = self.circle_center[1] + self.circle_size_imgs * math.sin(angle)
-            img = Image.open("./glad.png")
-            photo = ImageTk.PhotoImage(img)
-            self.canvas.image_refs.append(photo)
-            photo_output = self.canvas.create_image(x_img, y_img, image=photo)
-            self.images[i+1] = photo_output
-            
+            angle = i * angle_increment - math.pi / 2  # Calculate the angle for each image
+            x_img = self.circle_center[0] + self.circle_size_imgs * math.cos(angle)  # Calculate x-coordinate
+            y_img = self.circle_center[1] + self.circle_size_imgs * math.sin(angle)  # Calculate y-coordinate
+
+            img = Image.open("./glad.png")  # Open the image file
+            photo = ImageTk.PhotoImage(img)  # Create a PhotoImage object from the image
+            self.canvas.image_refs.append(photo)  # Append the PhotoImage object to a list for reference
+            photo_output = self.canvas.create_image(x_img, y_img, image=photo)  # Create an image item on the canvas
+            self.images[i+1] = photo_output  # Store the image item in a dictionary with the image number as the key
+                
         
     def remove_numbers(self, number_to_remove):
-        self.canvas.delete(self.numbers[number_to_remove])
-        self.canvas.delete(self.images[number_to_remove])
-        del self.numbers[number_to_remove]
-        del self.images[number_to_remove]
-                   
+        """
+        Remove a number label and image from the canvas.
+
+        :param self (object): The instance of the class that this method belongs to.
+        :param number_to_remove (int): The number to remove.
+        :return: None
+        """
+        self.canvas.delete(self.numbers[number_to_remove])  # Delete the number label from the canvas
+        self.canvas.delete(self.images[number_to_remove])  # Delete the image from the canvas
+        del self.numbers[number_to_remove]  # Remove the number from the numbers dictionary
+        del self.images[number_to_remove]  # Remove the image from the images dictionary
+
+
     def clear_circle(self, from_restart):
-        if (from_restart):
-            self.sliderPeople.set(0)
-        self.endgame_text.config(text = "")
-        self.active = False
+        """
+        Clear the canvas and reset the game state.
+
+        :param self (object): The instance of the class that this method belongs to.
+        :param from_restart (bool): Whether the clear is called from a game restart.
+        :return: None
+        """
+        if from_restart:
+            self.sliderPeople.set(0)  # Reset the slider value to 0 if called from a game restart
+        self.endgame_text.config(text="")  # Clear the endgame text on the canvas
+        self.active = False  # Set the game state to inactive
         for number_label in self.numbers.values():
-            self.canvas.delete(number_label)
-        self.numbers = {}
-        self.images = {}
-        self.canvas.image_refs = []
-        self.canvas.delete('all')
+            self.canvas.delete(number_label)  # Delete all number labels from the canvas
+        self.numbers = {}  # Clear the numbers dictionary
+        self.images = {}  # Clear the images dictionary
+        self.canvas.image_refs = []  # Clear the image references list
+        self.canvas.delete('all')  # Delete all items from the canvas
         
     def display_endgame_msg(self, message):
-        message = textwrap.fill(message, width=100)
-        self.endgame_text.config(text = message)   
+        """
+        Display the endgame message on the canvas.
+
+        :param self (object): The instance of the class that this method belongs to.
+        :param message (str): The endgame message to display on the canvas.
+        :return: None
+        """
+        message = textwrap.fill(message, width=100)  # Format the message to fit within 100 characters per line
+        self.endgame_text.config(text=message)  # Set the endgame text on the canvas to the formatted message  
 
 root = tk.Tk()
 app = CircleNumbers(root)
