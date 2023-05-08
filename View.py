@@ -3,6 +3,7 @@ import math
 import textwrap
 from PIL import Image, ImageTk
 from Logic import yp
+from playsound import playsound
 
 # init function to get an engine instance for the speech synthesis
 
@@ -199,6 +200,7 @@ class CircleNumbers:
         """
         self.canvas.delete(self.numbers[number_to_remove])  # Delete the number label from the canvas
         self.canvas.delete(self.images[number_to_remove])  # Delete the image from the canvas
+        playsound('fall.wav')
         del self.numbers[number_to_remove]  # Remove the number from the numbers dictionary
         del self.images[number_to_remove]  # Remove the image from the images dictionary
 
@@ -240,7 +242,6 @@ app = CircleNumbers(root)
 app.labelSurvivors.pack_configure(anchor=tk.CENTER)
 app.sliderSurvivors.pack_configure(anchor=tk.CENTER)
 app.sliderSpeed.pack_configure(anchor=tk.CENTER)
-#app.button.pack_configure(anchor=tk.CENTER)
 app.canvas.pack_configure(anchor=tk.CENTER)
 
 root.mainloop()
