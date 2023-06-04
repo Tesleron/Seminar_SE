@@ -3,7 +3,7 @@ import math
 import textwrap
 from PIL import Image, ImageTk
 from Logic import yp
-from playsound import playsound
+from pygame import mixer
 
 # init function to get an engine instance for the speech synthesis
 
@@ -15,7 +15,13 @@ class CircleNumbers:
         master.geometry("900x650")
         master.resizable(False, False)
         master.wm_attributes("-topmost", 1)
-
+        # Instantiate mixer
+        mixer.init()
+        # Load audio file
+        mixer.music.load('fall.wav')
+        print("music started playing....")
+        # Set preferred volume
+        mixer.music.set_volume(0.2)
         # Create a frame to hold the slider and button
         frame = tk.Frame(master)
         frame.pack(side=tk.RIGHT, padx=50)
@@ -200,7 +206,8 @@ class CircleNumbers:
         """
         self.canvas.delete(self.numbers[number_to_remove])  # Delete the number label from the canvas
         self.canvas.delete(self.images[number_to_remove])  # Delete the image from the canvas
-        playsound('fall.wav')
+        # Play the music
+        mixer.music.play()
         del self.numbers[number_to_remove]  # Remove the number from the numbers dictionary
         del self.images[number_to_remove]  # Remove the image from the images dictionary
 
